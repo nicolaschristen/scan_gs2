@@ -1,0 +1,47 @@
+Run GS2 scans
+=============
+
+contact: nicolas.christen@gmx.net
+
+
+What the scripts do
+-------------------
+
+-- create GS2 input files for scans
+
+-- create corresponding PBS/slurm scripts for the GS2 runs
+    -- submit those scripts
+
+-- create corresponding PBS/slurm scripts for postprocessing
+    -- submit those scripts
+
+Scans can have up to two dimensions (e.g. compute lin. growth rate vs tprim and g_exb).
+
+Within each dimension of a scan, an arbitrary number of parameters can be varied
+simultaneously (e.g. change tprim both for the electrons and for the ions).
+
+Parameters to scan have to be specified in a .py file inside the
+"scan_gs2/paramfiles/" folder.
+
+The user should provide templates for the input and scheduling files.
+
+Use the -h option to get help.
+
+
+Examples
+--------
+
+The user specified parameters to scan in "ntheta_scan.py", and named template files
+respectively "infile.in", 'sub_infile.sh', 'pp_infile.sh'.
+
+1) python ~/path/to/code/scan_gs2.py --paramfile ntheta_scan --base_name infile
+
+    This will create the input, GS2 scheduling and postprocessing scheduling files.
+
+2) python ~/path/to/code/scan_gs2.py --paramfile ntheta_scan --base_name infile -S
+
+    Same as 1), and also submits the GS2 runs to the queue.
+
+2) python ~/path/to/code/scan_gs2.py --paramfile ntheta_scan --base_name infile -P
+
+    Same as 1), and also submits the postprocessing jobs to the queue.
