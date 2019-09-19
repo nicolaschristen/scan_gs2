@@ -45,7 +45,7 @@ respectively "myrun.in", 'sub_myrun.sh', 'pp_myrun.sh'.
 
     Same as 1), and also submits the GS2 runs to the queue.
 
-2) python ~/path/to/code/scan_gs2.py --paramfile ntheta_scan --base_name myrun -P
+3) python ~/path/to/code/scan_gs2.py --paramfile ntheta_scan --base_name myrun -P
 
     Same as 1), and also submits the postprocessing jobs to the queue.
 
