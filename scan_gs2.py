@@ -26,6 +26,9 @@ pf = __import__(run.paramfile)
 
 def main():
 
+    # If nonlinear, make sure the user is aware of computing cost.
+    check_if_nl(run)
+
     # Add all parameters to the current scan
     nparams = len(pf.name)
     for iparam in range(nparams):
@@ -65,6 +68,21 @@ def increment_dim(scandim):
     else:
         scandim = END
     return scandim
+
+def check_if_nl(run):
+    orig_in_fname, dummmy1, dummy2 = get_filenames(run.base_name)
+    infile = fnml.read(orig_in_fname)
+    if infile['nonlinear_terms_knobs']['nonlinear_mode'] == 'on' \
+            and run.launch_sims == True:
+        choice = ''
+        mssg = ("\nWARNING:\n\n"
+                "You are about to run a scan of NONLINEAR gyrokinetic simulations.\n"
+                "Those can be extremely expensive. Do you still wish to proceed ?\n"
+                "'y'=Yes, 'n'=No:  ")
+        while not (choice in ['y','n']):
+            choice = input(mssg)
+        if choice == 'n':
+            sys.exit('\nExiting.\n')
 
 def modify_files(fname, scandim, patchin):
 
