@@ -1,0 +1,14 @@
+#!/bin/bash --login
+
+# Number of nodes (24 cores per node, max. 8 for short queue)
+#PBS -l select=2
+# Computing time (max. 20 min. for short queue)
+#PBS -l walltime=10:00:00
+# Budget
+#PBS -A MY_BUDGET
+
+export PBS_O_WORKDIR=$(readlink -f $PBS_O_WORKDIR)
+cd $PBS_O_WORKDIR
+export OMP_NUM_THREADS=1
+
+aprun -n 48 /path/to/gs2 myrun.in > myrun.txt

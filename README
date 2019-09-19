@@ -20,28 +20,36 @@ Scans can have up to two dimensions (e.g. compute lin. growth rate vs tprim and 
 Within each dimension of a scan, an arbitrary number of parameters can be varied
 simultaneously (e.g. change tprim both for the electrons and for the ions).
 
-Parameters to scan have to be specified in a .py file inside the
-"scan_gs2/paramfiles/" folder.
+Parameters to scan have to be specified in a .py file, stored inside the
+"paramfiles/" folder. As an example, see the provided 'ntheta_scan.py' file.
 
-The user should provide templates for the input and scheduling files.
-
-Use the -h option to get help.
+Templates for the GS2 input file, slurm/pbs GS2 submitting script and slurm/pbs
+postprocessing script should be saved in the directory from which the scan is run.
+For a slurm scheduler, they should respectively be named 'myrun.in', 'sub_myrun.sh'
+and 'pp_myrun.sh', where 'myrun' should be replaced with any user defined name.
+For PBS schedulers, replace '.sh' with '.pbs'. As an example, see the templates
+provided in the 'templates/' folder.
 
 
 Examples
 --------
 
-The user specified parameters to scan in "ntheta_scan.py", and named template files
-respectively "infile.in", 'sub_infile.sh', 'pp_infile.sh'.
+The user specified parameters to scan in "ntheta_scan.py", and named his template files
+respectively "myrun.in", 'sub_myrun.sh', 'pp_myrun.sh'.
 
-1) python ~/path/to/code/scan_gs2.py --paramfile ntheta_scan --base_name infile
+1) python ~/path/to/code/scan_gs2.py --paramfile ntheta_scan --base_name myrun
 
     This will create the input, GS2 scheduling and postprocessing scheduling files.
 
-2) python ~/path/to/code/scan_gs2.py --paramfile ntheta_scan --base_name infile -S
+2) python ~/path/to/code/scan_gs2.py --paramfile ntheta_scan --base_name myrun -S
 
     Same as 1), and also submits the GS2 runs to the queue.
 
-2) python ~/path/to/code/scan_gs2.py --paramfile ntheta_scan --base_name infile -P
+2) python ~/path/to/code/scan_gs2.py --paramfile ntheta_scan --base_name myrun -P
 
     Same as 1), and also submits the postprocessing jobs to the queue.
+
+
+
+For more help, please use the -h option.
+
