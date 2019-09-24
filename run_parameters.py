@@ -60,7 +60,7 @@ class runobj:
                         then the input, scheduler and post-processing files should respectively be named \
                         \'myrun.in\', \'sub_myrun.sh\' and \'pp_myrun.sh\'.')
 
-        parser.add_argument('-d', '--ndim', nargs = '?', choices=[1,2],
+        parser.add_argument('-d', '--ndim', nargs = '?', choices=[1,2], type=int,
                 help = 'Number of dimensions in the scan. Within one single dimension, multiple \
                         parameters can be varied simultaneously (e.g. delt and nstep).')
 
