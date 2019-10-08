@@ -32,19 +32,23 @@ def main():
     # Add all parameters to the current scan
     nparams = len(pf.name)
     for iparam in range(nparams):
-        add_param_to_scan(pf.name[iparam], pf.val[iparam], pf.namelist[iparam], scan, pf.scandim[iparam])
+        add_param_to_scan(scan, pf.name[iparam], pf.dim[iparam], pf.namelist[iparam], pf.scandim[iparam], pf.func[iparam])
+
+    # Array containing all values of parameters higher in the scan tree
+    valtree = [0*i for i in range(nparams)]
 
     # Generate new input files
-    modify_files(run.base_name, scandim=ONE, patchin={})
+    modify_files(run.base_name, valtree, scandim=ONE, patchin={})
 
 class gs2_param:
-    def __init__(self, var='', val=np.array([]), in_list=''):
+    def __init__(self, var='', dim=np.array([]), in_list='', func=None):
         self.name = var
-        self.value = val
+        self.dim = dim
         self.namelist = in_list
+        self.func = func
 
-def add_param_to_scan(name, values, namelist, scan, scandim):
-    newparam = gs2_param(name, values, namelist)
+def add_param_to_scan(scan, name, dim, namelist, scandim, func):
+    newparam = gs2_param(name, dim, namelist, func)
     if scandim == ONE:
         scan[ONE].append(newparam)
     elif scandim == TWO:
@@ -84,10 +88,10 @@ def check_if_nl(run):
         if choice == 'n':
             sys.exit('\nExiting.\n')
 
-def modify_files(fname, scandim, patchin):
+def modify_files(fname, valtree, scandim, patchin):
 
     # Iterate over every set of values taken by parameters in this dimension of the scan.
-    for ival in range(scan[scandim][0].value.size):
+    for ival in range(scan[scandim][0].dim):
     
         # Name-base and patch to be modified for this ival.
         my_fname = fname
@@ -97,15 +101,21 @@ def modify_files(fname, scandim, patchin):
         for iparam in range(len(scan[scandim])):
             # Append parameter to namelist for in-file patching
             var = scan[scandim][iparam].name
-            val = scan[scandim][iparam].value[ival]
+            val = scan[scandim][iparam].func(ival,valtree)
             nml = scan[scandim][iparam].namelist
             if not nml in my_patchin:
                 my_patchin[nml] = {}
             my_patchin[nml][var] = val
             # Append parameter to the filenames
             my_fname = my_fname + '_' + var + '_' + str(val)
+            # Update history tree
+            if scandim == ONE:
+                iparam_all = iparam
+            if scandim == TWO:
+                iparam_all = len(scan[ONE]) + iparam
+            valtree[iparam_all] = val
         
-        # If we are at the last dimension of the scan, then patch and save the files.
+        # If we are at the last dimension of the scan, then patch, save the files, and clear history tree.
         if scandim == run.ndim:
             orig_in_fname, orig_sched_fname, orig_pp_fname = get_filenames(run.base_name)
             new_in_fname, new_sched_fname, new_pp_fname = get_filenames(my_fname)
@@ -139,7 +149,7 @@ def modify_files(fname, scandim, patchin):
         # Or move on to the next dimension of the scan by calling function recursively
         else:
             next_scandim = increment_dim(scandim)
-            modify_files(my_fname, next_scandim, my_patchin)
+            modify_files(my_fname, valtree, next_scandim, my_patchin)
 
 # Execute main
 if __name__ == '__main__':
